@@ -123,6 +123,8 @@ for c = 1:size(RespVec_directions,1)
     elseif lag(idx) < 0
         coherence_temp = padarray(coherence,[0 -lag(idx)],'post','replicate');
         [~,p] = corrcoef(coherence_temp(-lag(idx)+1:end),cell_trace);
+    else
+        [~,p] = corrcoef(coherence,cell_trace); % no lag correction means just go for it
     end
     
     p_values(c) = p(1,2);
