@@ -94,13 +94,13 @@ end
 %% 
 
 % rejecting recordings whose RFs aren't on the field
-alt_thresh = prctile(alt_shuff,90,2); % set really low on purpose so that all recordings are included
-azi_thresh = prctile(azi_shuff,90,2);
+alt_thresh = prctile(alt_shuff,99,2); % set really low on purpose so that all recordings are included
+azi_thresh = prctile(azi_shuff,95,2);
 
 isGoodAlt = (alt_corr_aggregate > alt_thresh');% & (alt_corr_aggregate>0.5);
 isGoodAzi = (azi_corr_aggregate > azi_thresh');% & (azi_corr_aggregate>0.5);
 
-isGoodRecording = isGoodAlt; %& isGoodAzi;
+isGoodRecording = true(length(isGoodAlt),1); %& isGoodAzi;
 
 %% turning from session to altogether (all cells analysis...)
 azi_pref = cat(2,azi_all_cell{isGoodRecording});
@@ -108,7 +108,6 @@ alt_pref = cat(2,alt_all_cell{isGoodRecording});
 
 y_pos = cat(1,x_pos_cell{isGoodRecording})';
 isSpatiallyTuned = cat(2,isSpat_cell{isGoodRecording});
-isCoherenceResponsive = cat(1,isCohCC_cell{isGoodRecording});
 CC_mean_coherence = cat(1,CC_mean_coherence_cell{isGoodRecording});
 azi_p = cat(2,azi_allp_cell{isGoodRecording});
 alt_p = cat(2,alt_allp_cell{isGoodRecording});
@@ -118,13 +117,13 @@ DSI = cat(2,DSI_cell{isGoodRecording});
 reliability = cat(1,reliability_cell{isGoodRecording});
 
 % also ones that pass anova...
-isANOVA = azi_p<0.01 | alt_p<0.01;
+isANOVA = azi_p<0.05 | alt_p<0.05;
 
 isReliable = (reliability>0.1)';
 
 % spearman's?
 corr(azi_pref(isSpatiallyTuned&isANOVA&isReliable)',CC_mean_coherence(isSpatiallyTuned&isANOVA&isReliable),'Type','Pearson')
-corr(alt_pref(isSpatiallyTuned&isANOVA&isReliable)',CC_mean_coherence(isSpatiallyTuned&isANOVA&isReliable),'Type','Pearson')
+corr(y_pos(isSpatiallyTuned&isANOVA&isReliable)',CC_mean_coherence(isSpatiallyTuned&isANOVA&isReliable),'Type','Pearson')
 
 corr(alt_pref(isSpatiallyTuned&isReliable)',CC_mean_coherence(isSpatiallyTuned&isReliable),'Type','Pearson')
 
@@ -139,49 +138,6 @@ scatplot(double(alt_pref(isSpatiallyTuned&isANOVA&isReliable))',double(CC_mean_c
 azi_locs = 1:40;
 alt_locs = 1:30;
 
-% also let's try binned stuff, both fraction and the value w/in binz
-
-bin_sz=3;
-azi_groups = discretize(azi_pref,[0:bin_sz:length(azi_locs),length(azi_locs)]); % in case our bin size doesn't reach the length....
-alt_groups = discretize(alt_pref,[0:bin_sz:length(alt_locs),length(alt_locs)]);
-
-isIncluded = isANOVA & isSpatiallyTuned & isReliable;
-for ii = 1:length(unique(azi_groups))
-    isCurrBin = azi_groups == ii;
-    azi_binned{ii} = CC_mean_coherence(isCurrBin&isIncluded);
-end
-
-for ii = 1:length(unique(alt_groups))
-    isCurrBin = alt_groups == ii;
-    alt_binned{ii} = CC_mean_coherence(isCurrBin&isIncluded);
-end
-
- errorbar(1:bin_sz:30,cellfun(@mean,alt_binned),cellfun(@(x) std(x)/sqrt(size(x,2)),alt_binned),'o')
- hold on
-errorbar(1:bin_sz:40,cellfun(@mean,azi_binned),cellfun(@(x) std(x)/sqrt(size(x,2)),azi_binned),'o')
-
-  
-
-isLeftHalf = alt_pref<15;
-
-isRightHalf = ~isLeftHalf;
-    
-mean(CC_mean_coherence(isLeftHalf&isIncluded))
-
-
-
-dat = alt_binned;
-temp = cat(2,dat{:});
-groups = [];
-
-for ii = 1:length(dat)
-    g_temp = ii * ones(1,length(dat{ii}));
-    groups = [groups g_temp];
-end
-
-
-
-%{
 alt_fits_all = cat(1,alt_fits_cell{isGoodRecording});
 azi_fits_all = cat(1,azi_fits_cell{isGoodRecording});
 
@@ -199,6 +155,17 @@ for c = 1:length(azi_fits)
     weights_azi(c,:) = rescale(azi_fits(c,:));
 end
 
+% 
+% for c = 1:length(alt_fits_all)
+%     alt_fitxCC(c,:) = rescale(alt_fits_all(c,:)) * CC_mean_coherence(c);
+%     weights_alt(c,:) = rescale(alt_fits_all(c,:));
+% end
+% 
+% for c = 1:length(azi_fits_all)
+%     azi_fitxCC(c,:) = rescale(azi_fits_all(c,:)) * CC_mean_coherence(c);
+%     weights_azi(c,:) = rescale(azi_fits_all(c,:));
+% end
+
 alt_weightedCC = sum(alt_fitxCC)./sum(weights_alt);
 azi_weightedCC = sum(azi_fitxCC)./sum(weights_azi);
 
@@ -207,5 +174,47 @@ azi_mat = repmat(azi_weightedCC,30,1);
 
 screen_mat = alt_mat+azi_mat;
 
+% also let's try binned stuff, both fraction and the value w/in binz
+
+bin_sz=3;
+azi_groups = discretize(azi_pref,[0:bin_sz:length(azi_locs),length(azi_locs)]); % in case our bin size doesn't reach the length....
+alt_groups = discretize(alt_pref,[0:bin_sz:length(alt_locs),length(alt_locs)]);
+
+isIncluded = isANOVA & isSpatiallyTuned & isReliable;
+for ii = 1:length(unique(azi_groups))
+    isCurrBin = azi_groups == ii;
+    azi_binned{ii} = CC_mean_coherence(isCurrBin&isIncluded);
+end
+
+for ii = 1:length(unique(alt_groups))
+    isCurrBin = alt_groups == ii;
+    alt_binned{ii} = CC_mean_coherence 
+
+ errorbar(1:bin_sz:30,cellfun(@mean,alt_binned),cellfun(@(x) std(x)/sqrt(size(x,2)),alt_binned),'o')
+ hold on
+errorbar(1:bin_sz:40,cellfun(@mean,azi_binned),cellfun(@(x) std(x)/sqrt(size(x,2)),azi_binned),'o')
+
+  
+
+isLeftHalf = alt_pref<15;
+
+isRightHalf = ~isLeftHalf;
     
-%}
+mean(CC_mean_coherence(isRightHalf&isIncluded))
+
+
+
+dat = alt_binned;
+temp = cat(2,dat{:});
+groups = [];
+
+for ii = 1:length(dat)
+    g_temp = ii * ones(1,length(dat{ii}));
+    groups = [groups g_temp];
+end
+
+
+
+
+    
+

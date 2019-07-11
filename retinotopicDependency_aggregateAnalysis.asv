@@ -1,0 +1,34 @@
+%retinotopicDependency_aggregateAnalysis;
+
+% cleaned up version of RF_CM_aggregateAnalysis.m
+
+%% Get your files
+CM_files = dir('**/coherenceResponseData.mat');
+RF_files = dir('*/*RFmapping_results.mat');
+
+if ~(length(CM_files) == length(RF_files))
+    fprintf('You have a serious issue.. your recordings are mismatched...\n')
+    return
+end
+
+
+%% initialize cell arrays
+azi_pref_cell = {};
+alt_pref_cell = {};
+CC_mean_coherence_cell = {};
+
+%% Aggregate
+ct = 1;
+for f = 1:length(RF_files) % going through the RF files...
+    
+      load([RF_files(f).folder '\' RF_files(f).name]) % load the appropriate data
+    load([CM_files(f).folder '\' CM_files(f).name])
+    
+    % Retiontopic preferences
+    azi_pref_cell = cellArrayAggregator(azi_pref_cell,'azi_pref');
+    alt_pref_cell = cellArrayAggregator(alt_pref_cell,'alt_pref');
+    
+    % coherence correlation
+    CC_mean_coherence_cell = cellArrayAggregator(CC_mean_coherence_cell,'CC_mean_coherence');
+    isCoherenceResponsive_cell = cellArrayAggregate(isCoherenceResponsive_cell,'
+end
