@@ -9,7 +9,7 @@ function [] = coherentMotionAnalysis_2P_CC()
 % Define necessary parameters
 visual_threshold    = 2; % zscore to be considered visually responsive
 coherence_threshold = 0.05; % p value to be considered coherence responsive
-maximum_offset      = 20; % maximum offset allowed for 
+maximum_offset      = 5; % maximum offset allowed for 
 
 
 %% Load data
@@ -112,29 +112,45 @@ end
 CC_mean_coherence = zeros(numCells,1);
 p_values          = zeros(numCells,1);
 reliability       = zeros(numCells,1); 
+idx               = zeros(numCells,1);
 
-% Determine the offset for the dataset
- [~,idx] = max(xcorr(mean(mean(RespVec_directions,1),3),coherence,maximum_offset));
+% Determine the mean offset for the dataset
+for c = 1:size(RespVec_directions,1)
+    cell_trace = detrend(mean(RespVec_directions(c,:,:),3));
+    [CC_mean_coherence(c),idx(c)] = max(xcorr(cell_trace,coherence,maximum_offset,'coeff'));
+end
+
+% Trimming edges, because this generally is junk...
+idx(idx == max(idx(:))) = [];
+idx(idx == min(idx(:))) = [];
 
 % This is the amount of lag... should always be positive
-lag = (idx) - maximum_offset;
+lag = mode(idx) - maximum_offset;
 
 if lag < 0
-    fprintf('Warning... something''s wrong, your lag is negative! Setting lag to 0... \n');
+    fprintf('Warning... something''s wrong, your lag is negative! \n');
     lag = 0;
 end
 
-% Correct for lag in the coherence trace
-coherence_lagCorrected = padarray(coherence,[0 lag],'pre','replicate');
-coherence_lagCorrected = coherence_lagCorrected(1:end-lag);
+% determine significance, the contrsuction is to account for offset in either direction
+if lag(idx) > 0
+    coherence_temp = padarray(coherence,[0 lag(idx)],'pre','replicate');
+    [~,p] = corrcoef(coherence_temp(1:end-lag(idx)),cell_trace);
+elseif lag(idx) < 0
+    coherence_temp = padarray(coherence,[0 -lag(idx)],'post','replicate');
+    [~,p] = corrcoef(coherence_temp(-lag(idx)+1:end),cell_trace);
+else
+    [~,p] = corrcoef(coherence,cell_trace); % no lag correction means just go for it
+end
 
+    
 for c = 1:size(RespVec_directions,1)
     % calculate the cross correlation
     cell_trace = detrend(mean(RespVec_directions(c,:,:),3));
-    [cc , p] = corrcoef(coherence_lagCorrected,cell_trace); % calculate correlation
+    [temp,lag] = xcorr(cell_trace,coherence,10,'coeff');
+    [CC_mean_coherence(c),idx] = max(temp);
     
-    CC_mean_coherence(c) = cc(1,2);
-    p_values(c)          = p(1,2);
+    p_values(c) = p(1,2);
     
     % calculate reliability
     reliability_all_reps = zeros(repeats,1);

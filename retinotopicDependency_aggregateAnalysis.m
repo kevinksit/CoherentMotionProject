@@ -10,6 +10,7 @@ anova_threshold = 0.01; % Threshold for determining of the cells are significant
 shuffle_iterations = 1000; % Iterations for shuffling the correlation between preference and location on imaging field
 shuffle_threshold = 99; % percentile of the distribution to cut off to be considered well tuned
 
+reliability_threshold = 0.1; % threshold for reliability to be included, just to get rid of crap cells
 %% Get your files
 CM_files = dir('**/coherenceResponseData.mat');
 RF_files = dir('*/*RFmapping_results.mat');
@@ -48,13 +49,13 @@ for f = 1:length(RF_files) % going through the RF files...
     reliability_cell           = cellArrayAggregator(reliability_cell,'reliability');
     
     % Calculations that need to be done within each recording...
-    isANOVA{f}                 = azi_p < anova_threshold & alt_p < anova_threshold;
+    isANOVA_cell{f}                 = alt_p < anova_threshold;
     
-    % shuffle analyses
+    % Shuffling for field significance
     x_locations                = roi_centroids(isSpatiallyTuned,1);
     y_locations                = roi_centroids(isSpatiallyTuned,2);
 
-    for iter = 1:shuffle_iterations % for now, maybe higher later?
+    for iter = 1:shuffle_iterations
         shuff_x = x_locations(datasample(1:length(x_locations),length(x_locations),'Replace',false));
         shuff_y = y_locations(datasample(1:length(y_locations),length(y_locations),'Replace',false));
         alt_shuff(iter) = corr(alt_pref(isSpatiallyTuned)',shuff_x);
@@ -67,4 +68,31 @@ end
 
 % Some further processing and turning from cell arrays to the corresponding vectors
 
-%start here
+isGoodRecording = isGoodAlt; % determines which recordings are good to include
+
+% putting everything together
+
+azi_pref = cat(2,azi_pref_cell{isGoodRecording});
+alt_pref = cat(2,alt_pref_cell{isGoodRecording});
+isSpatiallyTuned = cat(2,isSpatiallyTuned_cell{isGoodRecording});
+isANOVA = cat(2,isANOVA_cell{isGoodRecording});
+
+CC_mean_coherence = cat(1,CC_mean_coherence_cell{isGoodRecording});
+isCoherenceResponsive = cat(1,isCoherenceResponsive_cell{isGoodRecording});
+reliability = cat(1,reliability_cell{isGoodRecording});
+
+isReliable = (reliability > reliability_threshold)';
+%% Analyse
+isIncluded = isSpatiallyTuned & isANOVA & isReliable;
+
+% Calculate the correlation
+corr(azi_pref(isIncluded)',CC_mean_coherence(isIncluded),'Type','Pearson')
+corr(alt_pref(isIncluded)',CC_mean_coherence(isIncluded),'Type','Pearson')
+
+% Visualize? 
+
+scatter(alt_pref(isIncluded)',CC_mean_coherence(isIncluded)')
+
+
+
+

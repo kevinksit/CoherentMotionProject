@@ -156,8 +156,8 @@ for ii = 1:length(unique(alt_groups))
     alt_binned{ii} = CC_mean_coherence(isCurrBin&isIncluded);
 end
 
- errorbar(1:bin_sz:30,cellfun(@mean,alt_binned),cellfun(@(x) std(x)/sqrt(size(x,2)),alt_binned),'o')
- hold on
+errorbar(1:bin_sz:30,cellfun(@mean,alt_binned),cellfun(@(x) std(x)/sqrt(size(x,2)),alt_binned),'o')
+hold on
 errorbar(1:bin_sz:40,cellfun(@mean,azi_binned),cellfun(@(x) std(x)/sqrt(size(x,2)),azi_binned),'o')
 
   
