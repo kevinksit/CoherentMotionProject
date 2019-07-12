@@ -16,7 +16,7 @@ CM_files = dir('**/coherenceResponseData.mat');
 RF_files = dir('*/*RFmapping_results.mat');
 
 if ~(length(CM_files) == length(RF_files))
-    fprintf('You have a serious issue.. your recordings are mismatched...\n')
+    fprintf('You have a serious issue.. your recordings are mismatched... /n')
     return
 end
 
@@ -25,11 +25,15 @@ end
 azi_pref_cell              = {};
 alt_pref_cell              = {};
 isSpatiallyTuned_cell      = {};
+isAnova_cell               = {};
 
 CC_mean_coherence_cell     = {};
 isCoherenceResponsive_cell = {};
 pref_dir_cell              = {};
 reliability_cell           = {};
+
+isGoodAlt                  = logical.empty();
+isGoodAzi                  = logical.empty();
 
 %% Aggregate your data
 for f = 1:length(RF_files) % going through the RF files...
