@@ -159,7 +159,7 @@ fprintf('Percent coherence responsive: %.1f%% \n',round(mean(isCoherenceResponsi
 if plot_flag 
     figure
     
-    subplot(1,2,1)
+    subplot(2,2,1)
     histogram(max(CC_mean_coherence,[],2));
     hold on
     line(repmat(mean(max(CC_mean_coherence,[],2)),1,2),ylim,'LineWidth',2,'Color','r'); 
@@ -167,16 +167,11 @@ if plot_flag
     ylabel('Number Cells')
     xlabel('Coherence CC')
     
-    subplot(1,2,2)
-    temp = tabulate(pref_dir);
-    theta = cat(1,0,temp(:,1))*(pi/4);
-    rho = cat(1,temp(:,2),temp(1,2));
-    p = polarplot(theta,rho);
+    subplot(2,2,2)
+    polarhistogram(pref_dir.*(pi/4),8);
     pax = gca;
-    set(p,'Marker','o','MarkerSize',5,'LineStyle','--','LineWidth',2);
     set(pax,'ThetaZeroLocation','top','ThetaDir','clockwise');
-    title('Directional histogram')
-end
+    
     
 %{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% OLD JUNK CODE %%%%%%%%%%%%%%%%%%%%%%%%%%%
