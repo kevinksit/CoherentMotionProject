@@ -1,10 +1,10 @@
 
-function [] = coherentMotionAnalysis_2P_CC()
+function [] = coherentMotionAnalysis_2P_CC(data,Stimdat)
 
 %% For analysis of coherent motion data from 2P
 % Changelog Updated 09Jul2019 KS, cleaned up pretty significantly
 %           Updated 11Jul2019 KS, added code to use a single lag correction
-%           Updated 15Jul2019 KS, pref_dir calculated via CC instead of magnitude, and plotting supported
+%           Updated 15Jul2019 KS, pref_dir calculated via CC instead of magnitude, and plotting supported, added input args
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define necessary parameters
@@ -14,10 +14,12 @@ maximum_offset      = 20; % maximum offset allowed for
 plot_flag           = 1; % visualize the data or no?
 
 %% Load data
+if nargin == 0
 [fn_stim,pn_stim] = uigetfile('.mat');
 Stimdat = importdata([pn_stim fn_stim]);
 [fn_data,pn_data] = uigetfile('.mat');
 data = importdata([pn_data,fn_data]);
+end
 
 % Preprocessing, turning into spikes
 if ~isfield(data,'spikes')
