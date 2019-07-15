@@ -4,6 +4,7 @@ function [] = coherentMotionAnalysis_2P_CC()
 %% For analysis of coherent motion data from 2P
 % Changelog Updated 09Jul2019 KS, cleaned up pretty significantly
 %           Updated 11Jul2019 KS, added code to use a single lag correction
+%           Updated 15Jul2019 KS, pref_dir calculated via CC instead of magnitude, and plotting supported
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define necessary parameters
