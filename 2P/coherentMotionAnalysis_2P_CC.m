@@ -1,5 +1,5 @@
 
-function [] = coherentMotionAnalysis_2P_CC(data,Stimdat)
+function [] = coherentMotionAnalysis_2P_CC(data,Stimdat,plot_flag)
 
 %% For analysis of coherent motion data from 2P
 % Changelog Updated 09Jul2019 KS, cleaned up pretty significantly
@@ -10,15 +10,16 @@ function [] = coherentMotionAnalysis_2P_CC(data,Stimdat)
 % Define necessary parameters
 visual_threshold    = 2; % zscore to be considered visually responsive
 coherence_threshold = 0.05; % p value to be considered coherence responsive
-maximum_offset      = 20; % maximum offset allowed for 
-plot_flag           = 1; % visualize the data or no?
+maximum_offset      = 20; % maximum offset allowed for
 
 %% Load data
 if nargin == 0
-[fn_stim,pn_stim] = uigetfile('.mat');
-Stimdat = importdata([pn_stim fn_stim]);
-[fn_data,pn_data] = uigetfile('.mat');
-data = importdata([pn_data,fn_data]);
+    [fn_stim,pn_stim] = uigetfile('.mat');
+    Stimdat = importdata([pn_stim fn_stim]);
+    [fn_data,pn_data] = uigetfile('.mat');
+    data = importdata([pn_data,fn_data]);
+    
+    plot_flag           = 1; % visualize the data or no?
 end
 
 % Preprocessing, turning into spikes
@@ -30,7 +31,7 @@ end
 % Extract the necessary components
 repeats = Stimdat.repeats;
 directions = length(Stimdat.dot_parameters.coherence_direction);
-on_time = Stimdat.on_time; 
+on_time = Stimdat.on_time;
 pre_time = 1;
 off_time = Stimdat.off_time - pre_time;
 
@@ -64,9 +65,9 @@ end
 
 % Blocked response vector, with single numbers per response bin
 
-coherence = Stimdat.dot_parameters.coherence; 
+coherence = Stimdat.dot_parameters.coherence;
 temp = tabulate(coherence); %only taking real coherences, to account for the drift time
-isRealCoherence = temp(:,3)> Stimdat.transition_time * fs; 
+isRealCoherence = temp(:,3)> Stimdat.transition_time * fs;
 unique_coherences = temp(isRealCoherence,1);
 
 RespVec = zeros(numCells,directions,length(unique_coherences),repeats,'single');
@@ -103,7 +104,7 @@ isVisuallyResponsive = (meanOnResp ./ meanOffDev) > visual_threshold;
 % Calculate cross correlation for each cell
 CC_mean_coherence = zeros(numCells,1);
 p_values          = zeros(numCells,1);
-reliability       = zeros(numCells,1); 
+reliability       = zeros(numCells,1);
 
 RespVec_summed = zeros(1,size(RespVec_raw,2));
 
@@ -129,43 +130,44 @@ coherence_lagCorrected = coherence_lagCorrected(1:end-lag);
 
 for c = 1:size(RespVec_raw,1)
     for dir = 1:size(RespVec_raw,3)
-    % calculate the cross correlation
-    cell_trace = detrend(mean(RespVec_raw(c,:,dir,:),4));
-    [cc , p] = corrcoef(coherence_lagCorrected,cell_trace); % calculate correlation
-    
-    CC_mean_coherence(c,dir) = cc(1,2);
-    p_values(c,dir)          = p(1,2);
-    
-    % calculate reliability
-    reliability_all_reps = zeros(repeats,1);
-    for rep = 1:size(RespVec_raw,4)
-        temp = corrcoef(RespVec_raw(c,:,dir,rep),mean(RespVec_raw(c,:,dir,1:end~=rep),4));
-        reliability_all_reps(rep)  = temp(1,2);
-    end
-    
-    reliability(c,dir) = mean(reliability_all_reps);
+        % calculate the cross correlation
+        cell_trace = detrend(mean(RespVec_raw(c,:,dir,:),4));
+        [cc , p] = corrcoef(coherence_lagCorrected,cell_trace); % calculate correlation
+        
+        CC_mean_coherence(c,dir) = cc(1,2);
+        p_values(c,dir)          = p(1,2);
+        
+        % calculate reliability
+        reliability_all_reps = zeros(repeats,1);
+        for rep = 1:size(RespVec_raw,4)
+            temp = corrcoef(RespVec_raw(c,:,dir,rep),mean(RespVec_raw(c,:,dir,1:end~=rep),4));
+            reliability_all_reps(rep)  = temp(1,2);
+        end
+        
+        reliability(c,dir) = mean(reliability_all_reps);
     end
 end
 
 % Calculating final stuff
 [~,pref_dir] = max(CC_mean_coherence,[],2);
-isCoherenceResponsive = (p_values < coherence_threshold) & isVisuallyResponsive;
+
+isCoherenceResponsive = (min(p_values,[],2) < coherence_threshold) & isVisuallyResponsive;
 
 
 %save the data
-save coherenceResponseData.mat isCoherenceResponsive isVisuallyResponsive RespVec pref_dir CC_mean_coherence reliability 
+save coherenceResponseData.mat isCoherenceResponsive isVisuallyResponsive RespVec pref_dir CC_mean_coherence reliability
 
 
 fprintf('Percent coherence responsive: %.1f%% \n',round(mean(isCoherenceResponsive(isVisuallyResponsive))*100,2)); % Here, the %.1f says, floating point, with 1 decimal point precision
 
 %% Display the data...
-if plot_flag 
+if plot_flag
     figure
     
     subplot(1,2,1)
     histogram(max(CC_mean_coherence,[],2));
     hold on
-    line(repmat(mean(max(CC_mean_coherence,[],2)),1,2),ylim,'LineWidth',2,'Color','r'); 
+    line(repmat(mean(max(CC_mean_coherence,[],2)),1,2),ylim,'LineWidth',2,'Color','r');
     title('Coherence CC')
     ylabel('Number Cells')
     xlabel('Coherence CC')
@@ -180,7 +182,7 @@ if plot_flag
     set(pax,'ThetaZeroLocation','top','ThetaDir','clockwise');
     title('Directional histogram')
 end
-    
+
 %{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% OLD JUNK CODE %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -236,7 +238,7 @@ isVisuallyResponsive = zScoreVec > 2;% & dprime > 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%Was for plotting: 
+%Was for plotting:
 
 for c = 1:size(RespVec_directions)
     imagesc(squeeze(RespVec_directions(c,:,:))');
