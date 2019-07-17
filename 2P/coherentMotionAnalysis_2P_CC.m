@@ -1,4 +1,3 @@
-
 function [] = coherentMotionAnalysis_2P_CC(data,Stimdat,plot_flag)
 
 %% For analysis of coherent motion data from 2P
@@ -10,7 +9,7 @@ function [] = coherentMotionAnalysis_2P_CC(data,Stimdat,plot_flag)
 % Define necessary parameters
 visual_threshold    = 2; % zscore to be considered visually responsive
 coherence_threshold = 0.05; % p value to be considered coherence responsive
-maximum_offset      = 20; % maximum offset allowed for
+maximum_offset      = 5; % maximum offset allowed for
 
 %% Load data
 if nargin == 0
@@ -182,6 +181,25 @@ if plot_flag
     set(pax,'ThetaZeroLocation','top','ThetaDir','clockwise');
     title('Directional histogram')
 end
+
+
+%{
+The following code is for the purpose of re-running everything, copy paste it into a new script and run it...
+
+CM_files = dir('**/coherenceResponseData.mat');
+
+for f = 1:length(CM_files)
+    cd(CM_files(f).folder)
+    data_file = dir('*_registered_data.mat');
+    load(data_file.name);
+    
+    load('CoherentMotion_Stimdat.mat');
+    
+    coherentMotionAnalysis_2P_CC(data,Stimdata,0);
+end
+
+
+%}
 
 %{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% OLD JUNK CODE %%%%%%%%%%%%%%%%%%%%%%%%%%%
