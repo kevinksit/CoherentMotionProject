@@ -62,7 +62,8 @@ while a == 0
     
     registered_F0 = imwarp(VFS_p,tform,'OutputView',Rfixed); % warp the moving F0 to check performance
     
-    % compare unregistered vs registered to check performance, if looks good, then continue
+    % compare unregistered vs registered to check performance, if looks
+    % good, then continue
     figure('units','normalized','outerposition',[0 0 1 1]);
     subplot(1,2,1)
     imshowpair(common_coordinates,fixed_F0);

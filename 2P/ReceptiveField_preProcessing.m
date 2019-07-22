@@ -2,6 +2,8 @@ function ReceptiveField_preProcessing
 %Step 1/2: Process each direction using this first, then we'll combine it
 %later
 
+% Changelog
+
 % Get the information from the Stimdata
 [fn_Stimdat,pn_Stimdat] = uigetfile('.mat');
 [fn_data,pn_data] = uigetfile('.mat');

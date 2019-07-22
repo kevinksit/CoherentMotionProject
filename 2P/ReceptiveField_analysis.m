@@ -1,7 +1,6 @@
 % Step 2/2: Preprocess the data first, then use this to combine it
-clear
+clear 
 
-testing_flag = 1;
 disp('Choose your horizontal (altitude) data...')
 [fn_alt,pn_alt] = uigetfile('.mat');
 disp('Choose your vertical (azimuth) data...')
@@ -20,40 +19,13 @@ isVisuallyResponsive = alt_data.isVisuallyResponsive | azi_data.isVisuallyRespon
 altitude_m = squeeze(mean(mean(altitude,2),4));
 azimuth_m = squeeze(mean(mean(azimuth,2),4));
 
-% %%testing flag
-% if testing_flag
-%     %for altitude
-%     monitor_width = 81; % in degrees
-%     monitor_height = 67; % in degrees    % assuming 30 deg RF
-% 
-%   bar_deg = monitor_height/size(altitude_m,2); % each bar center is at... 
-%   top_edge =  size(altitude_m,2)/2;
-%   top_bar = round(top_edge/bar_deg);
-%   bot_edge = monitor_height-size(altitude_m,2)/2;
-%   bot_bar = round(bot_edge/bar_deg);
-%   scaling_vector_alt = [linspace(2,1,8), ones(1,14),linspace(1,2,8)];
-%   altitude_m = altitude_m(:,top_bar:bot_bar);
-% 
-%   bar_deg = monitor_width/size(azimuth_m,2); % each bar center is at... 
-%   left_edge =  size(azimuth_m,2)/2;
-%   left_bar = round(left_edge/bar_deg);
-%   right_edge = monitor_width-size(azimuth_m,2)/2;
-%   right_bar = round(right_edge/bar_deg);
-%   scaling_vector_azi = [linspace(2,1,8), ones(1,24),linspace(1,2,8)];
-% azimuth_m = azimuth_m(:,left_bar:right_bar);  
-%   
-% end
-
-
-
-
 for ii = 1:size(altitude_m,1)
-    [azi_fit{ii},azigof] = fit([1:size(azimuth_m,2)]',azimuth_m(ii,:)','gauss1','Upper',[20,size(azimuth_m,2),20],'Lower',[0,1,0]);
+    [azi_fit{ii},azigof] = fit([1:size(azimuth_m,2)]',azimuth_m(ii,:)','gauss1','Upper',[Inf,size(azimuth_m,2),Inf],'Lower',[0,1,0]);
     azi_pref(ii) = azi_fit{ii}.b1;
     azi_width(ii) = azi_fit{ii}.c1;
     azi_rsquare(ii) = azigof.rsquare;
     
-    [alt_fit{ii},altgof] = fit([1:size(altitude_m,2)]',altitude_m(ii,:)','gauss1','Upper',[20,size(altitude_m,2),20],'Lower',[0,1,0]);
+    [alt_fit{ii},altgof] = fit([1:size(altitude_m,2)]',altitude_m(ii,:)','gauss1','Upper',[Inf,size(altitude_m,2),Inf],'Lower',[0,1,0]);
     alt_pref(ii) = alt_fit{ii}.b1;
     alt_width(ii) = alt_fit{ii}.c1;
     alt_rsquare(ii) = altgof.rsquare;
@@ -102,7 +74,7 @@ end
    
 isANOVA = alt_p<0.01 | azi_p<0.01;
 
-isSpat = isSpatiallyTuned & isANOVA;
+isSpat = isSpatiallyTuned;% & isANOVA;
 x_locations = roi_centroids(:,1);
 y_locations = roi_centroids(:,2);
 
@@ -112,6 +84,30 @@ azi_corr = corr(azi_pref(isSpat)',y_locations(isSpat));
 
 save RFmapping_results.mat azi_pref alt_pref altitude azimuth isSpatiallyTuned alt_p azi_p azi_fit alt_fit roi_centroids alt_corr azi_corr
 
+
+% %%testing flag
+% if testing_flag
+%     %for altitude
+%     monitor_width = 81; % in degrees
+%     monitor_height = 67; % in degrees    % assuming 30 deg RF
+% 
+%   bar_deg = monitor_height/size(altitude_m,2); % each bar center is at... 
+%   top_edge =  size(altitude_m,2)/2;
+%   top_bar = round(top_edge/bar_deg);
+%   bot_edge = monitor_height-size(altitude_m,2)/2;
+%   bot_bar = round(bot_edge/bar_deg);
+%   scaling_vector_alt = [linspace(2,1,8), ones(1,14),linspace(1,2,8)];
+%   altitude_m = altitude_m(:,top_bar:bot_bar);
+% 
+%   bar_deg = monitor_width/size(azimuth_m,2); % each bar center is at... 
+%   left_edge =  size(azimuth_m,2)/2;
+%   left_bar = round(left_edge/bar_deg);
+%   right_edge = monitor_width-size(azimuth_m,2)/2;
+%   right_bar = round(right_edge/bar_deg);
+%   scaling_vector_azi = [linspace(2,1,8), ones(1,24),linspace(1,2,8)];
+% azimuth_m = azimuth_m(:,left_bar:right_bar);  
+%   
+% end
 
 
 % 

@@ -104,16 +104,17 @@ scatplot(alt_pref(isIncluded)',max(CC_mean_coherence(isIncluded,:),[],2)')
 
 alt = alt_pref(isIncluded);
 cc = max(CC_mean_coherence(isIncluded,:),[],2);
+isCoh = isCoherenceResponsive(isIncluded);
 
 alt_bins = discretize(alt,0:3:30);
 
 for ii = 1:length(unique(alt_bins))
     
-    binned_resp(ii) = mean(cc(alt_bins == ii));
+    binned_resp(ii) = mean(cc(alt_bins == ii))
+    std_binned_resp(ii) = std(cc(alt_bins == ii))/sum(alt_bins == ii);
 end
 
-plot(binned_resp)
-
+errorbar(1:length(binned_resp),binned_resp,std_binned_resp)
 %% Direciton analysis
 pref_dir = cat(1,pref_dir_cell{isGoodRecording});
 pref_dir = pref_dir(isIncluded);
