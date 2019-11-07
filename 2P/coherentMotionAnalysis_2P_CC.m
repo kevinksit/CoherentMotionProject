@@ -55,7 +55,7 @@ on_resp = zeros(numCells,on_frames,directions,repeats,'single');
 
 for rep = 1:repeats
     for dir = 1:directions
-        curr_frame = (rep-1)*rep_frames + (dir-1)*dir_frames+ pre_frames;
+        curr_frame = (rep-1)*rep_frames + (dir-1)*dir_frames + pre_frames;
         off_resp(:,dir,rep) = mean(data.spikes(:,curr_frame+1 : curr_frame+off_frames),2);
         on_resp(:,:,dir,rep) = data.DFF(:,curr_frame+off_frames+1 : curr_frame+off_frames+on_frames);
         RespVec_raw(:,:,dir,rep) = on_resp(:,:,dir,rep) - off_resp(:,dir,rep);

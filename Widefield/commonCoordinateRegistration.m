@@ -1,4 +1,4 @@
-function [] = signMapRegistration()
+function [] = commonCoordinateRegistration()
 %% Sign Map Registration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

@@ -52,7 +52,7 @@ isEdgeAlt = false(1,size(altitude_m,1));
     end
 
     
-isTooNarrow = (azi_width<1) | (alt_width<1);
+isTooNarrow = (azi_width<2) | (alt_width<2);
 isEdge = isEdgeAzi | isEdgeAlt;
 isTun = (alt_p<0.05) | (azi_p<0.05);
 
