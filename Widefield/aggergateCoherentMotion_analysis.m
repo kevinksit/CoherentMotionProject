@@ -14,7 +14,7 @@ for rec = 1:length(coherentMotion_aggregateData)
    curr_coherence = coherentMotion_aggregateData(rec).coherence_map;
    curr_vertret = coherentMotion_aggregateData(rec).vertical_retinotopy;
    curr_horzret = coherentMotion_aggregateData(rec).horizontal_retinotopy;
-   curr_magmap = rot90(mean(coherentMotion_aggregateData(rec).coherence_curve,3));
+   curr_magmap = rot90(mean(coherentMotion_aggregateData(rec).coherence_slope, 3));
    temp = corrcoef(distance_map(v1_roi),curr_vertret(v1_roi));
    distance_vertCC(rec) = temp(1,2);
    
@@ -33,13 +33,6 @@ for rec = 1:length(coherentMotion_aggregateData)
    retinotopies{rec} = curr_vertret(v1_roi);
    coherences{rec} = curr_coherence(v1_roi);
 end
-
-
-
-
-%% linmodel???
-
-
 
 %% Comparing correlation to the coherence trace
 for rec = 1:length(coherentMotion_aggregateData)

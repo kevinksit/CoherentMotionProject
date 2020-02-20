@@ -7,6 +7,7 @@ clear;
 data_type = 'new'; % or old
 %% is something wrong with the sorting? idk why we have V1 resps that are sucky..
 % load the data
+fprintf('Choose your stimulus data \n')
 [fn_stim,pn_stim] = uigetfile('.mat');
 Stimdat = importdata([pn_stim fn_stim]);
 data = matfile('DFF.mat');
@@ -32,25 +33,26 @@ RespVec = zeros(size(data,'DFF',1),size(data,'DFF',2),on_frames,num_movies,repea
 
 for rep = 1:repeats
     for mov = 1:num_movies
-    curr_frame = (rep-1)*rep_frames + (mov-1)*mov_frames + pre_frames;
-    off_resp = mean(data.DFF(:,:,curr_frame+1 : curr_frame+off_frames),3);
-    on_resp = data.DFF(:,:,curr_frame+off_frames+1 : curr_frame+off_frames+on_frames);
+        curr_frame = (rep-1)*rep_frames + (mov-1)*mov_frames + pre_frames;
+        off_resp = mean(data.DFF(:,:,curr_frame+1 : curr_frame+off_frames),3);
+        on_resp = data.DFF(:,:,curr_frame+off_frames+1 : curr_frame+off_frames+on_frames);
     RespVec(:,:,:,mov,rep) = on_resp - off_resp; % let's keep this off for now...
-    end
+end
 end
 
 switch data_type
-    case 'old'
-        movie1 = 1;
-        movie2 = 2;
-        movie3 = 3;
-    case 'new'
-        movie1 = Stimdat.movieID(1);
-        movie2 = Stimdat.movieID(2);
-        movie3 = Stimdat.movieID(3);
+case 'old'
+    movie1 = 1;
+    movie2 = 2;
+    movie3 = 3;
+case 'new'
+    movie1 = Stimdat.movieID(1);
+    movie2 = Stimdat.movieID(2);
+    movie3 = Stimdat.movieID(3);
 end
 
-load('D:\Dropbox\CodeInBeta_Kevin\Mouse Movies Stimulus\MouseMovies2014\mouse_movie_matfiles\combined_motion_information.mat');
+load(...
+    'C:\Users\sit\Dropbox\CodeInBeta_Kevin\Mouse Movies Stimulus\MouseMovies2014\mouse_movie_matfiles\combined_motion_information.mat');
 magnitude_calc = double(magnitude_calculated);
 
 mov_calc(:,1) = (resample(magnitude_calc(movie1,1:300),100,300)); %11 14 16?
@@ -77,19 +79,11 @@ for mov = 1:num_movies
     for y = 1:size(RespVec,1)
         for x = 1:size(RespVec,2)
             disp([num2str(y) ' , ' num2str(x) ' , ' num2str(mov)])
-          
-            
-               cell_trace = detrend(squeeze(mean(RespVec(y,x,trim+1:end,mov,:),5)));
-    [temp,lags] = xcorr(cell_trace,mov_calc(1:end-trim,mov),5,'coeff');
-    [coherenceCC(y,x,mov),idx] = max(temp);
-    lag_map(y,x,mov) = lags(idx);
-    
-            
+            cell_trace = detrend(squeeze(mean(RespVec(y,x,trim+1:end,mov,:),5)));
+            [temp,lags] = xcorr(cell_trace,mov_calc(1:end-trim,mov),5,'coeff');
+            [coherenceCC(y,x,mov),idx] = max(temp);
+            lag_map(y,x,mov) = lags(idx);
             coherenceCC_old(y,x,mov)  = corr(squeeze(mean(RespVec(y,x,trim:end-trim,mov,:),5)),mov_calc(trim:end-trim,mov));
-        
-        
-        
-        
         end
     end
 end

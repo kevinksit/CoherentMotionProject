@@ -4,12 +4,13 @@ clear;
 %% is something wrong with the sorting? idk why we have V1 resps that are sucky..
 testing_flag=0;
 % load the data
+disp('Load your stimulus data...')
 [fn_stim,pn_stim] = uigetfile('.mat');
 Stimdat = importdata([pn_stim fn_stim]);
 data = matfile('DFF.mat');
 
 repeats = Stimdat.repeats;
-on_time = Stimdat.on_time*Stimdat.presentations %* Stimdat.fade_rate; %replace 60 with presentations
+on_time = Stimdat.on_time*Stimdat.presentations; %* Stimdat.fade_rate; %replace 60 with presentations
 pre_time = 2;
 off_time = 3;%Stimdat.off_time - pre_time;
 
@@ -21,15 +22,8 @@ off_frames = off_time*fs;
 rep_frames = on_frames+off_frames+pre_frames;
 
 
-% %% removing entire_frame_activity
-% whole_frame_trace = squeeze(mean(mean(data.DFF,1),2));
-% 
-% for frame = 1:size(data,'DFF',3)
-%     DFF_subtracted(:,:,frame) = data.DFF(:,:,frame) - whole_frame_trace(frame);
-% end
-
 % extracting coherence values
-RespVec = zeros(size(data,'DFF',1),size(data,'DFF',2),on_frames,repeats,'single');
+RespVec = zeros(size(data,'DFF',1), size(data,'DFF',2), on_frames, repeats, 'single');
 
 for rep = 1:repeats
     curr_frame = (rep-1)*rep_frames + pre_frames;
@@ -56,7 +50,11 @@ for x = 1:size(RespVec,1)
 end
 
 
-save maps.mat  coherenceMeanCC
+save maps.mat coherenceMeanCC
+
+
+
+
 % 
 % RespVec_meaned = mean(RespVec,4);
 % 

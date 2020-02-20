@@ -2,18 +2,17 @@ function [tform,Rfixed] = referenceMap_registration(VFS)
 
 % recording registration maker doer, thing...
 %% first deterimining all the CoMs of the visual areas using the ccf stuff
-outline = importdata('D:\Temporary Code Folder\reference_map.mat');
+% outline = importdata('E:\_Code\CoherentMotionProject\Widefield\reference_map.mat');
+outline = imread('E:\_Code\CoherentMotionProject\Widefield\ABI_ctx_outline.tif');
 %%% REGISTERER %%%
 
 %% Control point selection and curation
 % from https://www.mathworks.com/help/images/control-point-registration.html
 % control point selection and checking to ensure good registration
-
 % just cause i'm too lazy to change the actual variable names oops. The
 % *128 is to scale it into a "seeable range" by image
 moving_F0 = ind2rgb(gray2ind(mat2gray(VFS),64),jet); 
 fixed_F0 = outline;
-
 
 a=0;
 while a == 0
@@ -48,14 +47,4 @@ while a == 0
     end
 end
 
-
-% now let's register the actual thing that matters!!! apply warp fieeeelddd
-% 
-% registered_VFS = imwarp(VFS_raw,tform,'OutputView',Rfixed);
-% fused = imfuse(registered_VFS,outline); % fuses the outlines with the registered VFS
-% %imagesc(fused);
-
 save transformation_parameters.mat tform Rfixed
-
-
-

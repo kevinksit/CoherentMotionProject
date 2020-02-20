@@ -88,6 +88,3 @@ cd(first)
 disp('Saving...')
 save(['naturalMouse_aggregateData' date],'naturalMouse_aggregateData');
 clear
-
-
-
