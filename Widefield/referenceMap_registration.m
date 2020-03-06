@@ -3,7 +3,9 @@ function [tform,Rfixed] = referenceMap_registration(VFS)
 % recording registration maker doer, thing...
 %% first deterimining all the CoMs of the visual areas using the ccf stuff
 % outline = importdata('E:\_Code\CoherentMotionProject\Widefield\reference_map.mat');
-outline = imread('E:\_Code\CoherentMotionProject\Widefield\ABI_ctx_outline.tif');
+% outline = imread('E:\_Code\CoherentMotionProject\Widefield\ABI_ctx_outline.tif');
+
+outline = imread('E:\_Coherent Motion Project Figures\reference_corticalmap.png');
 %%% REGISTERER %%%
 
 %% Control point selection and curation

@@ -4,8 +4,9 @@ function coherentMotionAnalysis_WarpMovie()
 %% is something wrong with the sorting? idk why we have V1 resps that are sucky..
 testing_flag=0;
 % load the data
-Stimdat = importdata('E:/CoherentMotionWarp/CoherentMotion_Stimdat.mat');
-%Stimdat = importdata('E:/CoherentMotionWarp/V2/CoherentMotion_Stimdat.mat');
+
+%Stimdat = importdata('E:/CoherentMotionWarp/CoherentMotion_Stimdat.mat');
+Stimdat = importdata('E:/CoherentMotionWarp/V2/CoherentMotion_Stimdat.mat');
 data = matfile('DFF.mat');
 
 repeats = Stimdat.repeats;
@@ -38,6 +39,7 @@ if size(data, 'DFF', 3) < recording_length
 else
     dff = data.DFF;
 end
+
 
 for rep = 1:repeats
     for dir = 1:directions

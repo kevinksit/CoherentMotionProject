@@ -1,4 +1,8 @@
 %load your aggregate data
+
+addpath(genpath('C:\Users\sit\Dropbox\CodeInBeta_Kevin\Other'))
+
+
 load(uigetfile)
 recording_number = length(naturalMouse_aggregateData)+1;
 
@@ -37,7 +41,7 @@ end
 naturalMouse_aggregateData(recording_number).cortical_map = VFS_raw;
 naturalMouse_aggregateData(recording_number).VerticalRetinotopy = maps.VerticalRetinotopy;
 naturalMouse_aggregateData(recording_number).HorizontalRetinotopy = maps.HorizontalRetinotopy;
-
+- 
 % run the registerer
 if ~registered_flag
     [tform, Rfixed] = referenceMap_registration(VFS_raw);

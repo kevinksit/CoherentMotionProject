@@ -109,7 +109,7 @@ alt_pref = cat(2,alt_all_cell{isGoodRecording});
 y_pos = cat(1,x_pos_cell{isGoodRecording})';
 isSpatiallyTuned = cat(2,isSpat_cell{isGoodRecording});
 isCoherenceResponsive = cat(1,isCohCC_cell{isGoodRecording});
-CC_mean_coherence = cat(1,CC_mean_coherence_cell{isGoodRecording});
+CC_mean_coherence = max(cat(1,CC_mean_coherence_cell{isGoodRecording}), [], 2);
 azi_p = cat(2,azi_allp_cell{isGoodRecording});
 alt_p = cat(2,alt_allp_cell{isGoodRecording});
 
@@ -120,11 +120,11 @@ reliability = cat(1,reliability_cell{isGoodRecording});
 % also ones that pass anova...
 isANOVA = azi_p<0.01 | alt_p<0.01;
 
-isReliable = (reliability>0.1)';
+isReliable = (max(reliability,[],2)>0.1)';
 
 % spearman's?
-corr(azi_pref(isSpatiallyTuned&isANOVA&isReliable)',CC_mean_coherence(isSpatiallyTuned&isANOVA&isReliable),'Type','Pearson')
-corr(alt_pref(isSpatiallyTuned&isANOVA&isReliable)',CC_mean_coherence(isSpatiallyTuned&isANOVA&isReliable),'Type','Pearson')
+corr(azi_pref(isSpatiallyTuned&isANOVA)',CC_mean_coherence(isSpatiallyTuned&isANOVA),'Type','Pearson')
+corr(alt_pref(isSpatiallyTuned&isANOVA)',CC_mean_coherence(isSpatiallyTuned&isANOVA),'Type','Pearson')
 
 corr(alt_pref(isSpatiallyTuned&isReliable)',CC_mean_coherence(isSpatiallyTuned&isReliable),'Type','Pearson')
 
