@@ -4,7 +4,7 @@ function [] = coherentMotionAnalysis_2P_CC(data,Stimdat,plot_flag)
 % Changelog Updated 09Jul2019 KS, cleaned up pretty significantly
 %           Updated 11Jul2019 KS, added code to use a single lag correction
 %           Updated 15Jul2019 KS, pref_dir calculated via CC instead of magnitude, and plotting supported, added input args
-
+%           Updated 10Jun2020 KS, finalized for publication
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define necessary parameters
 visual_threshold    = 2; % zscore to be considered visually responsive
@@ -44,10 +44,7 @@ rep_frames = dir_frames * directions;
 
 numCells = size(data.DFF,1);
 
-
-
 %% Sorting data into response matrices
-
 % Raw responses (neural traces)
 RespVec_raw = zeros(numCells,on_frames,directions,repeats,'single');
 off_resp = zeros(numCells,directions,repeats,'single');

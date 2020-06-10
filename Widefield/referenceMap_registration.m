@@ -7,7 +7,6 @@ function [tform,Rfixed] = referenceMap_registration(VFS)
 
 outline = imread('E:\_Coherent Motion Project Figures\reference_corticalmap.png');
 %%% REGISTERER %%%
-
 %% Control point selection and curation
 % from https://www.mathworks.com/help/images/control-point-registration.html
 % control point selection and checking to ensure good registration

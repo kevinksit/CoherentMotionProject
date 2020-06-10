@@ -1,3 +1,4 @@
+% for processing widefield coherent motion recordings
 load(uigetfile);
 
 for rec = 1:length(coherentMotion_aggregateData)

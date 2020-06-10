@@ -1,3 +1,4 @@
+% aggregating coherent motion recordings for 2p
 CM_files = dir('**/coherenceResponseData.mat');
 RF_files = dir('*/*RFmapping_results.mat');
 

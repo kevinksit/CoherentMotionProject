@@ -36,7 +36,6 @@ for ii = 1:size(altitude,1)
     azi_p(ii) = anova1(squeeze(mean(azimuth(ii,:,:,:),2))',[],'off');
 end
 
-
 %edge discarding
 
 isEdgeAzi = false(1,size(azimuth_m,1));

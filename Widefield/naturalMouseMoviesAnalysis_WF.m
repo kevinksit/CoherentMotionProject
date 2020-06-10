@@ -1,9 +1,6 @@
 % coherentMotionAnalysis
 clear;
 
-
-%
-
 data_type = 'new'; % or old
 %% is something wrong with the sorting? idk why we have V1 resps that are sucky..
 % load the data

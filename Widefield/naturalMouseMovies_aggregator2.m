@@ -45,7 +45,6 @@ naturalMouse_aggregateData(recording_number).horizontal_retinotopy = maps.Horizo
 naturalMouse_aggregateData(recording_number).magnitude_map = rot90(magnitude_map);
 naturalMouse_aggregateData(recording_number).reliability_map = reliability;
 
-
 % Return
 cd(old)
 

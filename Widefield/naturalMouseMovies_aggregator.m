@@ -2,7 +2,6 @@
 
 addpath(genpath('C:\Users\sit\Dropbox\CodeInBeta_Kevin\Other'))
 
-
 load(uigetfile)
 recording_number = length(naturalMouse_aggregateData)+1;
 

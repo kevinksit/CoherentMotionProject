@@ -1,7 +1,6 @@
 % coherentMotionAnalysis
 function coherentMotionAnalysis_WarpMovie()
 
-%% is something wrong with the sorting? idk why we have V1 resps that are sucky..
 testing_flag=0;
 % load the data
 

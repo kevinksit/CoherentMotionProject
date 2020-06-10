@@ -1,4 +1,3 @@
-
 files = dir('*_nat.mat');
 % If you need to read...
 v = VideoReader('dierction0.mp4');

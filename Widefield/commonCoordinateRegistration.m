@@ -1,4 +1,5 @@
 function [] = commonCoordinateRegistration()
+    
 %% Sign Map Registration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

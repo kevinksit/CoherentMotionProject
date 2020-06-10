@@ -14,7 +14,6 @@ if ~isfield(data,'spikes')
 end
 
 % Get the data that you need
-
 zThresh = 2;
 
 on_time = Stimdata.on_time;

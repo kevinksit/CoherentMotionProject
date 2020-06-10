@@ -5,11 +5,6 @@ for ii = 1:length(naturalMouse_aggregateData)
     horz_ret = naturalMouse_aggregateData(ii).HorizontalRetinotopy;
     vert_ret = naturalMouse_aggregateData(ii).VerticalRetinotopy;
 
-    
-    %horz_ret = discretize(horz_ret,40);
-    
-   % vert_ret = discretize(vert_ret,30);
-    
     temp = struct2cell(naturalMouse_aggregateData(ii).rois);
     rois = cat(3,temp{:});
     

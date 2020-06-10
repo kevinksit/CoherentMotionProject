@@ -1,7 +1,6 @@
 %retinotopicDependency_aggregateAnalysis;
 
 % cleaned up version of RF_CM_aggregateAnalysis.m
-
 % Written 10Jul2019 KS
 
 %% Analysis parameters
